@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
+  <title>Recipe Book</title>
+
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://unpkg.com/vue-material@0.7.4/dist/vue-material.css">
+
+  <link href="recipebook.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+
+</head>
+<body>
+   
+  <div id="app" class="app-viewport">
+    <!-- top bar -->
+    <md-whiteframe md-elevation="1" class="main-toolbar">
+      <md-toolbar>
+        
+        <!-- page title -->
+        <h2 class="md-title" style="flex: 1">{{ pagetitle }}</h2>
+
+      </md-toolbar>
+    </md-whiteframe>
+
+    <!-- Recipe editor -->
+    <md-list class="editrecipe" v-if="uistate == 'editrecipe'">
+      <md-list-item>
+        <md-input-container>
+          <md-input v-model="newIngredientTitle" placeholder="add Ingredient" @keyup.enter.native="onAddIngredient"></md-input>
+        </md-input-container>
+        <md-button class="md-icon-button md-list-action" v-on:click="onAddIngredient" v-bind:disabled="newIngredientTitle.length == 0">
+          <md-icon class="md-primary">add</md-icon>
+        </md-button>
+      </md-list-item>
+      <md-list-item v-for="ingredient in getRecipeIngredients(activeRecipe)" :key="ingredient.__id">
+        <div class="md-list-text-container">
+          {{ ingredient.name }}
+        </div>
+      </md-list-item>
+    </md-list>
+
+    <!-- add new shopping list form-->
+    <md-card v-if="uistate == 'addrecipe'">
+    <md-card-header>Add recipe</md-card-header>
+    <md-card-content>
+      <md-input-container>
+        <label>Recipe name</label>
+        <md-input placeholder="Title" v-model="recipeToAdd.name"></md-input>
+      </md-input-container>   
+    </md-card-content>
+    </md-card>
+
+    <!-- save new shopping list button -->
+    <md-button class="md-raised" v-if="uistate == 'addrecipe'" v-on:click="onClickSaveRecipe" v-bind:disabled="recipeToAdd.name.length == 0">
+      Save
+    </md-button>
+
+    <!--Recipe List-->
+    <md-list v-if="uistate == 'recipeoverview'">
+      <md-card v-for="recipe in recipes" :key="recipe.__id" :data-id="recipe.__id">
+        <md-card-header>
+          <div class="md-title">{{ recipe.name }}</div>
+          <md-button class="md-icon-button md-dense md-warn md-raised" v-on:click="onClickDeleteRecipe(recipe)">  
+            <md-icon>delete</md-icon>
+          </md-button>
+        </md-card-header>
+        <md-card-actions>
+          <md-button v-on:click="onClickLikeRecipe(recipe)">
+              {{recipe.likes}}
+              <md-icon>thumb_up</md-icon>
+          </md-button>
+          <md-button class="md-primary md-raised" v-on:click="onClickRecipe(recipe)">
+              Zutaten
+              <md-icon>chevron_right</md-icon>
+        </md-button>
+        </md-card-actions>
+      </md-card>
+    </md-list>
+
+    <!-- Add Recipe Button -->
+    <div class="floatingbutton" v-if="uistate == 'recipeoverview'">
+      <md-button class="md-fab md-primary md-raised" v-on:click="onClickAddRecipe">
+        <md-icon>add</md-icon>
+      </md-button>
+    </div> 
+
+    <!-- back button -->
+    <md-button class="md-icon-button" v-if="uistate != 'recipeoverview'" v-on:click="onBack">
+      <md-icon>arrow_back</md-icon>
+    </md-button>
+
+
+  </div> 
+  
+  <script src="idb.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cuid/1.3.8/browser-cuid.min.js"></script>
+  <script src="https://unpkg.com/vue@2.4.2/dist/vue.js"></script>
+  <script src="https://unpkg.com/vue-material@0.7.4/dist/vue-material.js"></script>
+  <script src="recipebook.js"></script>
+  <script src="crdt.js"></script>
+  <script src="idb-service.js"></script>
+
+
+
+  </body>
+</html>
