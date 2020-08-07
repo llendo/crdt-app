@@ -100,7 +100,7 @@ var app = new Vue({
     },
     onClickLikeRecipe: function(recipe) {
       recipe.likes += 1;
-      handleOperations(mockOperations).then(console.log('hi'))
+      handleOperations(mockOperations);
     },
 
     onClickDeleteRecipe: function(recipe) {

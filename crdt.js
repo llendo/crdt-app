@@ -1,21 +1,3 @@
-var idbPromise = idb.open('crdt-app', 1, function(upgradeDb) {
-    console.log('Creating object stores')
-    upgradeDb.createObjectStore('operations', { keyPath: '__id'});
-    upgradeDb.createObjectStore('recipes', { keyPath: '__id'});
-    upgradeDb.createObjectStore('ingredients', { keyPath: '__id'});
-});
-
-
-function getAllOperations(){
-    idbPromise.then ( db => {
-        let transaction = db.transaction('operations', 'readonly');
-        let store = transaction.objectStore('operations');
-        return store.getAll();
-    }).then( a => {
-        console.log(a)
-    })
-}
-
 function generateUpdateOperation (store, object, key, value) {
     let targetStore = store;
     let targetObject = object;
@@ -61,7 +43,7 @@ function applyOperationn(operation){
 }
 
 function modifyObjects(operations, storeName){
-    return dbPromise.then(db => {
+    return idbPromise.then(db => {
         var transaction = db.transaction(storeName);
         var store = transaction.objectStore(storeName);
         return Promise.all(
@@ -93,11 +75,11 @@ function createStoreToObjectsMap(objects, storeName){
     })
 }
 
+//@TODO: operation.object macht object obsolete 
 function modifyObject(object, operation){
     return new Promise(function(resolve, reject){
         var modifiedObject = object;
         modifiedObject[operation.key] = operation.value;
-        console.log(update)
         resolve(modifiedObject);
     })
 }
@@ -155,6 +137,7 @@ function mapToMatchingLocalOperations(newOperations) {
 function handleOperations(newOperations){
     fetchOperations().then( localOperations => {
         console.log('hi')
+        console.log(localOperations)
         return mapOperations(localOperations, newOperations);
     }).then( mappedOperations => {
         console.log('hi2')
@@ -167,7 +150,7 @@ function handleOperations(newOperations){
             //sieht komisch aus: array machen aus den keys, für jeden key die funktion ausführen)
             //es kommen zurück: 0, 1, oder 2 arrays mit modifizierten objekten.
             Array.from(validOperationsMap.keys()).map( storeName => {
-                return modifyObjects(validOperationsMap[storeName], storeName)
+                return modifyObjects(validOperationsMap.get(storeName), storeName)
             })
         )
     }).then( modifiedObjectMapArray => {
@@ -178,20 +161,20 @@ function handleOperations(newOperations){
 
 function updateProductStores(objectMapArray) {
     Promise.all(objectMapArray.map (storeNameToObjectMap => {
-        dbPromise.then( db => {
-            storeName = Object.keys(storeNameToObjectMap)[0];
-            objects = storeNameToObjectMap[storeName];
+        idbPromise.then( db => {
+            let storeName = Array.from(storeNameToObjectMap.keys())[0];
+            let objects = storeNameToObjectMap.get(storeName);
             var transaction = db.transaction(storeName, 'readwrite');
             var store = transaction.objectStore(storeName);
             return Promise.all(objects.map( (object) => {
-                return store.put(item);
+                return store.put(object);
             }
             ))
         })
     })).catch( e => {
-        console.log(e)
+        console.log(e);
     }).then(() => {
-        console.log('Product store updated successfully')
+        console.log('Product store updated successfully');
     })
 }
 
@@ -200,7 +183,7 @@ function mapOperations(localOperations, newOperations){
     return new Promise((resolve, reject) => {
         let mappedOperations = new Map();
         let sortedLocalOperations = localOperations.sort((a, b) => {
-            return a.timestamp - b.timestamp;
+            return b.timestamp - a.timestamp;
         });
         newOperations.forEach(newOperation => {
             mostRecentMatchingLocalOperation = sortedLocalOperations.find( localOperation =>
@@ -212,11 +195,11 @@ function mapOperations(localOperations, newOperations){
             //mapped operations cannot be undefined as long as there are operations
             mappedOperations.set(newOperation, mostRecentMatchingLocalOperation);
         });
-        if(mappedOperations.length > 0){
+        if(mappedOperations.size > 0){
             console.log('mapped new operations to local operations :', mappedOperations)
             resolve (mappedOperations);
         }
-        reject(new Error('No Operations to Map. There might be no incoming operations.'))
+        //reject(new Error('No Operations to Map. There might be no incoming operations.'))
     });
 }
 
@@ -224,13 +207,13 @@ function filterOperationsToApply(mappedOperations){
     return new Promise((resolve, reject) => {
         let recipeOperationsToApply = [];
         let ingredientOperationsToApply = [];
-        mappedOperations.forEach(mappedOperation => {
+        Array.from(mappedOperations.keys()).forEach(mappedOperation => {
             let recentMatchingOperation = mappedOperations.get(mappedOperation)
             if (!recentMatchingOperation || mappedOperation.timestamp > recentMatchingOperation){
-                if(mappedOperations.store == 'recipes'){
-                    recipeOperationsToApply.push[mappedOperation]
+                if(mappedOperation.store == 'recipes'){
+                    recipeOperationsToApply.push(mappedOperation)
                 }else
-                    ingredientOperationsToApply.push[mappedOperation]
+                    ingredientOperationsToApply.push(mappedOperation)
             }
         })
         let operationsToApply = new Map([

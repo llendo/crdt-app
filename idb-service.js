@@ -5,6 +5,16 @@ var idbPromise = idb.open('crdt-app', 1, function(upgradeDb) {
         upgradeDb.createObjectStore('ingredients', { keyPath: '__id'});
 });
 
+function getAllOperations(){
+    idbPromise.then ( db => {
+        let transaction = db.transaction('operations', 'readonly');
+        let store = transaction.objectStore('operations');
+        return store.getAll();
+    }).then( a => {
+        console.log(a)
+    })
+}
+
 function saveOperation(operation) {
     idbPromise.then( db => {
         let transaction = db.transaction('operations', 'readwrite');
@@ -14,11 +24,11 @@ function saveOperation(operation) {
 };
 
 function fetchOperations() {
-    idbPromise.then ( db => {
+    return idbPromise.then ( db => {
         let transaction = db.transaction('operations', 'readonly');
         let store = transaction.objectStore('operations');
         return store.getAll();
-    })
+    });
 }
 
 function postObject(storeName, object){
