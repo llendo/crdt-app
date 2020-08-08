@@ -4,15 +4,13 @@ const emptyRecipe = {
   "version": 1,
   "__id": "",
   "name": "",
-  "likes": 0,
-  "myIngredients": []
 };
 
 const emptyIngredient = {
   "version": 1,
   "__id": "",
   "name": "",
-  "recipeId": ""
+  "recipe": ""
 };
 
 const mockOperations = [
@@ -36,7 +34,7 @@ const mockOperations = [
 
 // Vue Material theme
 Vue.material.registerTheme('default', {
-  primary: 'blue',
+  primary: 'green',
   accent: 'yellow',
   warn: 'red',
   background: 'white'
@@ -67,16 +65,12 @@ var app = new Vue({
     activeRecipe: null,
     newIngredientTitle:''
   },
+  created: function() {
+    this.updateAllUiComponents();
+  },
   methods: {
-    getMyShit: function(){
-      idbPromise.then ( db => {
-        let transaction = db.transaction('operations', 'readonly');
-        let store = transaction.objectStore('operations');
-        return store.getAll();
-    });
-    },
     getRecipeIngredients: function(recipe) {
-      let ing = this.ingredients.filter(ingredient => ingredient.recipeId === recipe.__id);
+      let ing = this.ingredients.filter(ingredient => ingredient.recipe === recipe.__id);
       console.log(ing);
       return ing;
     },
@@ -89,7 +83,7 @@ var app = new Vue({
     onClickSaveRecipe: function() {
       this.recipes.unshift(this.recipeToAdd);
       console.log(this.recipeToAdd);
-      handleOperations([generateUpdateOperation('recipes', this.recipeToAdd.__id, 'name', this.recipeToAdd.name)]);
+      processOperations([generateUpdateOperation('recipes', this.recipeToAdd.__id, 'name', this.recipeToAdd.name)]);
       //saveOperation(generateUpdateOperation('recipes', this.recipeToAdd.__id, 'name', this.recipeToAdd.name))
       //applyOperation(generateUpdateOperation('recipes', this.recipeToAdd.__id, 'name', this.recipeToAdd.name))
       this.onBack();
@@ -101,7 +95,7 @@ var app = new Vue({
     },
     onClickLikeRecipe: function(recipe) {
       recipe.likes += 1;
-      handleOperations(mockOperations);
+      processOperations(mockOperations);
     },
 
     onClickDeleteRecipe: function(recipe) {
@@ -110,21 +104,45 @@ var app = new Vue({
       this.recipes.splice(recipeIndex, 1);
       saveOperation(generateDeleteOperation('recipes', recipeToDelete));
     },
-    
     onAddIngredient: function() {
       var newIngredient = JSON.parse(JSON.stringify(emptyIngredient));
       newIngredient.__id = 'in_' + cuid();
       newIngredient.name = this.newIngredientTitle;
-      newIngredient.recipeId = this.activeRecipe.__id;
+      newIngredient.recipe = this.activeRecipe.__id;
       var parsedobj = JSON.parse(JSON.stringify(this.activeRecipe));
       console.log(parsedobj);
       this.ingredients.unshift(newIngredient);
-      saveOperation(generateUpdateOperation('ingredients', newIngredient.__id, 'name', newIngredient.name));
+      setNameOperation = generateUpdateOperation('ingredients', newIngredient.__id, 'name', newIngredient.name),
+      setRecipeOperation = generateUpdateOperation('ingredients', newIngredient.__id, 'recipe', newIngredient.recipe)
+      processOperations([setNameOperation, setRecipeOperation]);
       this.newItemTitle = '';
     },
     onBack: function() {
       this.pagetitle='Recipe Book';
       this.uistate='recipeoverview';
+    }, 
+    updateUiComponents2: function (dataName) {
+      return getAllFromStore(dataName).then(loadedObjects => {
+          this[dataName] = loadedObjects;
+      })
+    },
+    updateAllUiComponents: async function () {
+      return Promise.all([
+          this.updateUiComponents('recipes'),
+          this.updateUiComponents('ingredients')
+      ]).catch( e => {
+          console.log(e)
+      }).then((messages) => {
+          messages.forEach(message => {console.log(message)})
+      })
+    },
+    updateUiComponents: function (dataName) {
+      return new Promise ((resolve, reject) => {
+          return getAllFromStore(dataName).then(loadedObjects => {
+              this[dataName] = loadedObjects.reverse();
+              resolve('Updated ' + dataName + 'UI Components');
+          })
+      })
     }
   }
 });

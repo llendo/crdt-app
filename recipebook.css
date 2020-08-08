@@ -3,8 +3,44 @@ body {
 }
 
 .md-theme-default.md-card {
+  margin: .5em 1em;
   background-color: white !important;
-  margin:20px
+
+  background: #fff;
+  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+  margin: 1em auto 0;
+  padding: 14px;
+  position: relative;
+  width: 80%;
+  overflow: visible;
+}
+
+.md-theme-default.md-card:before, .md-theme-default.md-card:after {
+  content: "";
+  height: 90%;
+  position: absolute;
+  width: 100%;
+  z-index: -1;
+}
+.md-theme-default.md-card:before {
+  background: #fafafa;
+  box-shadow: 0 0 8px rgba(0,0,0,0.2);
+  left: -5px;
+  top: 4px;
+  transform: rotate(-1.4deg);
+}
+.md-theme-default.md-card:after {
+  background: #f6f6f6;
+  box-shadow: 0 0 3px rgba(0,0,0,0.2);
+  right: -3px;
+  top: 1px;
+  transform: rotate(1.2deg);
+}
+
+.md-card .md-title{
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-thickness: 10%;
 }
 
 .main-toolbar{
@@ -15,14 +51,40 @@ body {
 
 .floatingbutton {
   position: fixed;
+  bottom: 100px;
+  left: 100px;
   z-index: 1000;
 }
+
+.md-theme-default.md-button:not([disabled]).md-primary.md-raised{
+  background-color: #73dea4;
+}
+
+.md-theme-default.md-button:hover:not([disabled]).md-primary.md-raised{
+  background-color: #30a778;
+}
+
 
 .md-card-header {
   display: flex;
   justify-content: space-between;
 }
 
+.md-theme-default.md-toolbar {
+  background: #1d976c;
+  background: linear-gradient(to right, #1d976c, #93f9b9);
+  color: white;
+}
+
 .itemedit {
   background-color: white !important
+}
+
+.inputcontainer-recipe {
+  padding-left: 10%;
+  width: 80%;
+}
+
+[v-cloak]{
+  display: none;
 }

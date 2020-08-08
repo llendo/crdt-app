@@ -5,16 +5,6 @@ var idbPromise = idb.open('crdt-app', 1, function(upgradeDb) {
         upgradeDb.createObjectStore('ingredients', { keyPath: '__id'});
 });
 
-function getAllOperations(){
-    idbPromise.then ( db => {
-        let transaction = db.transaction('operations', 'readonly');
-        let store = transaction.objectStore('operations');
-        return store.getAll();
-    }).then( a => {
-        console.log(a)
-    })
-}
-
 function saveOperation(operation) {
     idbPromise.then( db => {
         let transaction = db.transaction('operations', 'readwrite');
@@ -22,14 +12,6 @@ function saveOperation(operation) {
         return store.put(operation);
     });
 };
-
-function fetchOperations() {
-    return idbPromise.then ( db => {
-        let transaction = db.transaction('operations', 'readonly');
-        let store = transaction.objectStore('operations');
-        return store.getAll();
-    });
-}
 
 function postObject(storeName, object){
     idbPromise.then (db => {
@@ -79,4 +61,12 @@ function fetchObjectById(storeName, objectId) {
             return store.get(objectId);
         }
     })
+}
+
+function getAllFromStore(storeName) {
+    return idbPromise.then ( db => {
+        let transaction = db.transaction(storeName, 'readonly');
+        let store = transaction.objectStore(storeName);
+        return store.getAll();
+    });
 }

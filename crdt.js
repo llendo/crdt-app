@@ -35,35 +35,29 @@ function generateDeleteOperation (store, object) {
     }
 }
 
-function applyOperationn(operation){
-    fetchObjectById(operation.store, operation.object)
-        .then(result => {
-            console.log(result);
-            targetField = operation.key;
-            result.targetField = operation.value;
-        });
+
+function modifyObject(object, operation){
+    return new Promise(function(resolve, reject){
+        if(object == undefined){
+            object = {
+                __id: operation.object
+            };
+        };
+        var modifiedObject = object;
+        modifiedObject[operation.key] = operation.value;
+        saveOperation(operation)
+        resolve(modifiedObject);
+    })
 }
 
-function modifyObjects(operations, storeName){
+function updateObject(operation, storeName){
     return idbPromise.then(db => {
-        var transaction = db.transaction(storeName);
+        var transaction = db.transaction(storeName, 'readwrite');
         var store = transaction.objectStore(storeName);
-        return Promise.all(
-            operations.map( operation => {
-                return store.get(operation.object).then( objectToModify => {
-                    //Store.get returns undefined when the object was not found.
-                    //in that case, we need to create the object with the corresponding ID
-                    //otherwise we can't modify an undefined object
-                    if(objectToModify == undefined){
-                        objectToModify = {
-                            __id: operation.object
-                        };
-                    };
-                    return modifyObject(objectToModify, operation);
-                })
-            })
-        ).then(modifiedObjects => {
-            return createStoreToObjectsMap(modifiedObjects, storeName);
+        return store.get(operation.object).then( objectToUpdate => {
+            return modifyObject(objectToUpdate, operation)
+        }).then(modifiedObject => {
+            return store.put(modifiedObject)
         })
     })
 }
@@ -76,111 +70,36 @@ function createStoreToObjectsMap(objects, storeName){
         resolve(storeNameToModifiedObjectsMap);
     })
 }
-
-//@TODO: operation.object macht object obsolete 
-function modifyObject(object, operation){
-    return new Promise(function(resolve, reject){
-        var modifiedObject = object;
-        modifiedObject[operation.key] = operation.value;
-        saveOperation(operation)
-        resolve(modifiedObject);
-    })
-}
-
-function reallyApplyOperations(operations){
-    console.log(operations)
-    Promise.all(operations.map(operation => {
-         applyOperation(operation)
-            .then(operation => {
-                console.log("applied", operation)
-                saveOperation(operation)
-            })
-            .catch(e =>{
-                console.log(e)
-            })
-    }))
-}
-
-function applyOperations(newOperations) {
-    console.log('hi')
-    let mappedOperations = mapToMatchingLocalOperations(newOperations);
-    let operationsToApply = [];
-    newOperations.forEach(newOperation => {
-        let recentMatchingOperation = mappedOperations.get(newOperation)
-        if (!recentMatchingOperation || newOperation.timestamp > recentMatchingOperation){
-            //applyOperation(newOperation)
-            operationsToApply.push[newOperation]
-        }
-    })
-    reallyApplyOperations(operationsToApply);
-}
-
-function mapToMatchingLocalOperations(newOperations) {
-    console.log('burr')
-    let mappedOperations = new Map();
-    fetchOperations()
-        .then(result => {
-            let sortedLocalOperations = result.sort((a, b) => {
-                return a.timestamp - b.timestamp;
-            });
-            //Array.find returned die erste passende, locale operation 
-            newOperations.forEach(newOperation => {
-                let mostRecentMatchingLocalOperation = sortedLocalOperations.find( operation =>
-                    operation.store === newOperation.store  &&
-                    operation.object === newOperation.object  &&
-                    operation.key === newOperation.key  
-                );
-                mappedOperations.set(newOperation, mostRecentMatchingLocalOperation);
-            });
-        });
-    console.log('mapped new operations to local operations :', mappedOperations)
-    return mappedOperations;
-}
-
-function handleOperations(newOperations){
-    fetchOperations().then( localOperations => {
-        console.log('hi')
-        console.log(localOperations)
-        return mapOperations(localOperations, newOperations);
-    }).then( mappedOperations => {
-        console.log('hi2')
-        return filterOperationsToApply(mappedOperations);
-    }).then( validOperationsMap => {
-        console.log('h3')
-        //valid operations is a map of store name and valid operations for that store
-        //like this: storeName:operations[]
-        return Promise.all(
-            //sieht komisch aus: array machen aus den keys, für jeden key die funktion ausführen)
-            //es kommen zurück: 0, 1, oder 2 arrays mit modifizierten objekten.
-            Array.from(validOperationsMap.keys()).map( storeName => {
-                return modifyObjects(validOperationsMap.get(storeName), storeName)
-            })
-        )
-    }).then( modifiedObjectMapArray => {
-        console.log('hi4')
-        updateProductStores(modifiedObjectMapArray)
-    })
-}
-
-function updateProductStores(objectMapArray) {
-    Promise.all(objectMapArray.map (storeNameToObjectMap => {
-        idbPromise.then( db => {
-            let storeName = Array.from(storeNameToObjectMap.keys())[0];
-            let objects = storeNameToObjectMap.get(storeName);
-            var transaction = db.transaction(storeName, 'readwrite');
-            var store = transaction.objectStore(storeName);
-            return Promise.all(objects.map( (object) => {
-                return store.put(object);
-            }
-            ))
+            //valid operations is a map of store name and valid operations for that store
+            //like this: storeName:operations[]
+                //sieht komisch aus: array machen aus den keys, für jeden key die funktion ausführen)
+                //es kommen zurück: 0, 1, oder 2 arrays mit modifizierten objekten.
+function processOperations(newOperations){
+    if (newOperations.length > 0) {
+        getAllFromStore('operations').then( localOperations => {
+            console.log(localOperations)
+            return mapOperations(localOperations, newOperations);
+        }).then( mappedOperations => {
+            return filterOperationsToApply(mappedOperations);
+        }).then( validOperationsMap => {
+            return Promise.all(
+                Array.from(validOperationsMap.keys()).map( storeName => {
+                    return Promise.all(
+                        validOperationsMap.get(storeName).map( validOperation => {
+                            return updateObject(validOperation, storeName)
+                        })
+                    )
+                })
+             )
+        // }).then( modifiedObjectMaps => {
+        //     updateProductStores(modifiedObjectMaps);
+        }).catch(e => {
+            console.log(e);
         })
-    })).catch( e => {
-        console.log(e);
-    }).then(() => {
-        console.log('Product store updated successfully');
-    })
+    } else {
+        console.log('No new operations found')
+    }
 }
-
 
 function mapOperations(localOperations, newOperations){
     return new Promise((resolve, reject) => {
@@ -199,10 +118,11 @@ function mapOperations(localOperations, newOperations){
             mappedOperations.set(newOperation, mostRecentMatchingLocalOperation);
         });
         if(mappedOperations.size > 0){
-            console.log('mapped new operations to local operations :', mappedOperations)
+            console.log('Mapped new operations to local operations')
             resolve (mappedOperations);
+        } else {
+            reject(new Error('Error: No operations to map. Something went wrong or there might be no incoming operations. This should not happen.'))
         }
-        //reject(new Error('No Operations to Map. There might be no incoming operations.'))
     });
 }
 
@@ -226,6 +146,6 @@ function filterOperationsToApply(mappedOperations){
         if(operationsToApply.get('recipes').length > 0 || operationsToApply.get('ingredients').length > 0){
             resolve(operationsToApply);
         }
-        reject(new Error('No Operations to Apply. Incoming operations are already applied!'));
+        reject('Local operations are already up to date. No newer operations found!');
     })
 }
