@@ -1,3 +1,5 @@
+//TODO Find a way to save Operations
+
 function generateUpdateOperation (store, object, key, value) {
     let targetStore = store;
     let targetObject = object;
@@ -13,7 +15,7 @@ function generateUpdateOperation (store, object, key, value) {
         key: targetKey,
         value: targetValue,
         timestamp: timestamp,
-        __id: 'message:' + cuid()
+        __id: 'op_' + cuid()
     }
 }
 
@@ -79,7 +81,7 @@ function createStoreToObjectsMap(objects, storeName){
 function modifyObject(object, operation){
     return new Promise(function(resolve, reject){
         var modifiedObject = object;
-        modifiedObject[operation.key] = operation.value;
+        saveOperation(operation)
         resolve(modifiedObject);
     })
 }

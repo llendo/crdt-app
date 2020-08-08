@@ -17,20 +17,20 @@ const emptyIngredient = {
 
 const mockOperations = [
   {
-    "__id": 'me_ckdiw1bxw00011w66m7mol85k',
+    "store": 'recipes',
     "object": 're_ckdiw1bxw002411w66m7mol85s',
     "key": 'name',
     "value": 'Spaghetti Bolognese',
-    "store": 'recipes',
-    "timestamp": 1596723653500
+    "timestamp": 1596723653500,
+    "__id": 'op_ckdiw1bxw00011w66m7mol85k'
   },
   {
-    "__id": 'me_ckdiw31to00011w660dtqsvhl',
+    "store": 'recipes',
     "object": 're_ckdiw1bxw00011w66m7mol85k',
     "key": 'name',
     "value": 'Penne Alfredo',
-    "store": 'recipes',
-    "timestamp": 1596723653400
+    "timestamp": 1596723653400,
+    "__id": 'op_ckdiw31to00011w660dtqsvhl',
   }
 ];
 
