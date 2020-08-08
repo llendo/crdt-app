@@ -81,6 +81,7 @@ function createStoreToObjectsMap(objects, storeName){
 function modifyObject(object, operation){
     return new Promise(function(resolve, reject){
         var modifiedObject = object;
+        modifiedObject[operation.key] = operation.value;
         saveOperation(operation)
         resolve(modifiedObject);
     })

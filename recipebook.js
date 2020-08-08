@@ -89,7 +89,8 @@ var app = new Vue({
     onClickSaveRecipe: function() {
       this.recipes.unshift(this.recipeToAdd);
       console.log(this.recipeToAdd);
-      saveOperation(generateUpdateOperation('recipes', this.recipeToAdd.__id, 'name', this.recipeToAdd.name))
+      handleOperations([generateUpdateOperation('recipes', this.recipeToAdd.__id, 'name', this.recipeToAdd.name)]);
+      //saveOperation(generateUpdateOperation('recipes', this.recipeToAdd.__id, 'name', this.recipeToAdd.name))
       //applyOperation(generateUpdateOperation('recipes', this.recipeToAdd.__id, 'name', this.recipeToAdd.name))
       this.onBack();
     },
