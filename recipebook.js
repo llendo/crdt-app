@@ -61,70 +61,111 @@ var app = new Vue({
     recipes: [],
     ingredients: [],
     uistate: 'recipeoverview',
-    recipeToAdd: null,
     activeRecipe: null,
-    newIngredientTitle:''
+    activeIngredient: null,
+    newIngredientTitle:'',
+    newRecipeTitle:'',
+    editRecipeTitle:'',
+    editIngredientTitle:"",
+    editIngredientMeasure:""
+    
+  },
+  computed:{
+    visibleRecipes: function() {
+      return this.recipes.filter(function (recipe){
+        return (recipe.tombstone != 1 && recipe.name)
+      })
+    }
   },
   created: function() {
     this.updateAllUiComponents();
   },
   methods: {
     getRecipeIngredients: function(recipe) {
-      let ing = this.ingredients.filter(ingredient => ingredient.recipe === recipe.__id);
-      console.log(ing);
-      return ing;
+      return this.ingredients.filter(ingredient => (
+        ingredient.recipe === recipe.__id && 
+        ingredient.tombstone != 1 &&
+        ingredient.name));
+    },
+    onClickEditIngredientTitle: function(ingredient) {
+      this.pagetitle = 'Edit ingredient name';
+      this.uistate = 'editingredienttitle';
+      this.activeIngredient = ingredient;
+    },
+    onClickEditIngredientMeasure: function(ingredient) {
+      this.pagetitle = 'Edit measure';
+      this.uistate = 'editingredientmeasure';
+      this.activeIngredient = ingredient;
+    },
+    onClickEditRecipeTitle: function(recipe) {
+      this.pagetitle = 'Edit recipe name';
+      this.uistate = 'editrecipetitle';
+      this.activeRecipe = recipe;
+    },
+    onClickSaveEditRecipeTitle: function() {
+      let recipeIndex = this.recipes.findIndex(r => r === this.activeRecipe);
+      this.recipes[recipeIndex].name = this.editRecipeTitle;
+      processOperations([generateUpdateOperation('recipes', this.activeRecipe.__id, 'name', this.editRecipeTitle)]);
+      this.onBack();
+    },
+    onClickSaveEditIngredientTitle: function() {
+      let ingredientIndex = this.ingredients.findIndex(i => i === this.activeIngredient);
+      this.ingredients[ingredientIndex].name = this.editIngredientTitle;
+      processOperations([generateUpdateOperation('ingredients', this.activeIngredient.__id, 'name', this.editIngredientTitle)]);
+      this.onBackIng();
+    },
+    onClickSaveEditIngredientMeasure: function() {
+      let ingredientIndex = this.ingredients.findIndex(i => i === this.activeIngredient);
+      this.ingredients[ingredientIndex].measure = this.editIngredientMeasure;
+      processOperations([generateUpdateOperation('ingredients', this.activeIngredient.__id, 'measure', this.editIngredientMeasure)]);
+      this.onBackIng();
+    },
+    onClickDeleteIngredient: function(ingredient) {
+      let ingredientIndex = this.ingredients.findIndex(i => i === ingredient);
+      this.ingredients.splice(ingredientIndex, 1);
+      processOperations([generateDeleteOperation('ingredients', ingredient.__id)]);
+    },
+    onClickDeleteRecipe: function(recipe) {
+      let recipeIndex = this.recipes.findIndex(r => r === recipe);
+      this.recipes.splice(recipeIndex, 1);
+      processOperations([generateDeleteOperation('recipes', recipe.__id)]);
     },
     onClickAddRecipe: function() {
-      this.pagetitle = 'Add new recipe';
-      this.uistate = 'addrecipe';
-      this.recipeToAdd = JSON.parse(JSON.stringify(emptyRecipe));
-      this.recipeToAdd.__id = 're_' + cuid();
+      if (this.newRecipeTitle != ""){
+        var newRecipe = {};
+        newRecipe.__id = 're_' + cuid();
+        newRecipe.name = this.newRecipeTitle;
+        this.recipes.unshift(newRecipe);
+        processOperations([generateUpdateOperation('recipes', newRecipe.__id, 'name', newRecipe.name)]);
+        this.newRecipeTitle = '';
+      }
     },
-    onClickSaveRecipe: function() {
-      this.recipes.unshift(this.recipeToAdd);
-      console.log(this.recipeToAdd);
-      processOperations([generateUpdateOperation('recipes', this.recipeToAdd.__id, 'name', this.recipeToAdd.name)]);
-      //saveOperation(generateUpdateOperation('recipes', this.recipeToAdd.__id, 'name', this.recipeToAdd.name))
-      //applyOperation(generateUpdateOperation('recipes', this.recipeToAdd.__id, 'name', this.recipeToAdd.name))
-      this.onBack();
+    onClickAddIngredient: function() {
+      if (this.newIngredientTitle != ""){
+        var newIngredient = {};
+        newIngredient.__id = 'in_' + cuid();
+        newIngredient.name = this.newIngredientTitle;
+        newIngredient.recipe = this.activeRecipe.__id;
+        this.ingredients.unshift(newIngredient);
+        setNameOperation = generateUpdateOperation('ingredients', newIngredient.__id, 'name', newIngredient.name),
+        setRecipeOperation = generateUpdateOperation('ingredients', newIngredient.__id, 'recipe', newIngredient.recipe)
+        processOperations([setNameOperation, setRecipeOperation]);
+        this.newIngredientTitle = '';
+      }
     },
     onClickRecipe: function(recipe) {
       this.activeRecipe = recipe;
       this.pagetitle = recipe.name;
       this.uistate = 'editrecipe';
     },
-    onClickLikeRecipe: function(recipe) {
-      recipe.likes += 1;
-      processOperations(mockOperations);
-    },
 
-    onClickDeleteRecipe: function(recipe) {
-      let recipeIndex = this.recipes.findIndex(r => r === recipe);
-      let recipeToDelete = this.recipes[recipeIndex].__id;
-      this.recipes.splice(recipeIndex, 1);
-      saveOperation(generateDeleteOperation('recipes', recipeToDelete));
-    },
-    onAddIngredient: function() {
-      var newIngredient = JSON.parse(JSON.stringify(emptyIngredient));
-      newIngredient.__id = 'in_' + cuid();
-      newIngredient.name = this.newIngredientTitle;
-      newIngredient.recipe = this.activeRecipe.__id;
-      var parsedobj = JSON.parse(JSON.stringify(this.activeRecipe));
-      console.log(parsedobj);
-      this.ingredients.unshift(newIngredient);
-      setNameOperation = generateUpdateOperation('ingredients', newIngredient.__id, 'name', newIngredient.name),
-      setRecipeOperation = generateUpdateOperation('ingredients', newIngredient.__id, 'recipe', newIngredient.recipe)
-      processOperations([setNameOperation, setRecipeOperation]);
-      this.newItemTitle = '';
-    },
     onBack: function() {
       this.pagetitle='Recipe Book';
       this.uistate='recipeoverview';
-    }, 
-    updateUiComponents2: function (dataName) {
-      return getAllFromStore(dataName).then(loadedObjects => {
-          this[dataName] = loadedObjects;
-      })
+    },
+    onBackIng: function(){
+      this.pagetitle= this.activeRecipe.name;
+      this.uistate='editrecipe';
     },
     updateAllUiComponents: async function () {
       return Promise.all([

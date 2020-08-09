@@ -57,13 +57,26 @@ body {
 }
 
 .md-theme-default.md-button:not([disabled]).md-primary.md-raised{
-  background-color: #73dea4;
+  background-color: #73dea4 !important;
 }
 
 .md-theme-default.md-button:hover:not([disabled]).md-primary.md-raised{
-  background-color: #30a778;
+  background-color: #30a778 !important;
 }
 
+.md-button.md-icon-button.md-dense.md-primary.md-raised.md-theme-default{
+  margin-left: .5em;
+}
+
+.button-addrecipe {
+  margin: auto auto auto 1em !important;
+  background-color: #73dea4 !important;
+}
+
+.button-save  {
+  width: 100px;
+  margin-top: 0;
+}
 
 .md-card-header {
   display: flex;
@@ -83,6 +96,68 @@ body {
 .inputcontainer-recipe {
   padding-left: 10%;
   width: 80%;
+}
+
+.editrecipe {
+  padding: 0em 15%;
+}
+
+.md-list-text-container {
+  display: flex;
+  flex: 0 1 auto;
+  justify-content: center;
+}
+
+
+.container-ingredient {
+  width: 70% !important;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+.container-measure {
+  width: 30% !important;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+.container-table {
+  border-bottom-style: dotted;
+  border-bottom-width: 2px;
+}
+
+.button-table {
+  width: 20px !important;
+  min-width: 20px !important;
+  height: 22px !important;
+  min-height: 22px !important;
+  padding: 2px !important;
+  line-height: 20px !important;
+  margin: 0 !important; 
+}
+
+.icon-table {
+  width: 18px;
+  min-width: 18px;
+  height: 18px;
+  min-height: 18px;
+  font-size: 18px;
+}
+
+.nowrap {
+  display: flex;
+  flex-wrap: nowrap;
+}
+
+.md-toolbar .md-title {
+  color: #fff;
+}
+
+.md-list-item .md-icon {
+  color: inherit;
 }
 
 [v-cloak]{

@@ -1,8 +1,8 @@
 //TODO Find a way to save Operations
 
-function generateUpdateOperation (store, object, key, value) {
+function generateUpdateOperation (store, Id, key, value) {
     let targetStore = store;
-    let targetObject = object;
+    let targetObject = Id;
     let targetKey  = key;
     let targetValue = value;
     let timestamp = Date.now();
@@ -19,9 +19,9 @@ function generateUpdateOperation (store, object, key, value) {
     }
 }
 
-function generateDeleteOperation (store, object) {
+function generateDeleteOperation (store, Id) {
     let targetStore = store;
-    let targetObject = object;
+    let targetObject = Id;
     let timestamp = Date.now();
     console.log ('deleted ', targetObject, 'in Store ', targetStore);
     navigator.storage.estimate().then((data)=>console.log(data))
@@ -132,7 +132,7 @@ function filterOperationsToApply(mappedOperations){
         let ingredientOperationsToApply = [];
         Array.from(mappedOperations.keys()).forEach(mappedOperation => {
             let recentMatchingOperation = mappedOperations.get(mappedOperation)
-            if (!recentMatchingOperation || mappedOperation.timestamp > recentMatchingOperation){
+            if (!recentMatchingOperation || mappedOperation.timestamp > recentMatchingOperation.timestamp){
                 if(mappedOperation.store == 'recipes'){
                     recipeOperationsToApply.push(mappedOperation)
                 }else
