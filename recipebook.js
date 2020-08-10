@@ -153,6 +153,10 @@ var app = new Vue({
         this.newIngredientTitle = '';
       }
     },
+    onClickSync: function(){
+      sync2();
+      this.updateAllUiComponents();
+    },
     onClickRecipe: function(recipe) {
       this.activeRecipe = recipe;
       this.pagetitle = recipe.name;
@@ -162,7 +166,6 @@ var app = new Vue({
     onBack: function() {
       this.pagetitle='Recipe Book';
       this.uistate='recipeoverview';
-      sync();
     },
     onBackIng: function(){
       this.pagetitle= this.activeRecipe.name;

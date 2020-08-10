@@ -91,8 +91,6 @@ function processOperations(newOperations){
                     )
                 })
              )
-        // }).then( modifiedObjectMaps => {
-        //     updateProductStores(modifiedObjectMaps);
         }).catch(e => {
             console.log(e);
         })
@@ -178,20 +176,17 @@ function filterOperationsToApply1(mappedOperations){
 }
 
 function sync2(){
-    getAllFromStore('operations')
-        .then( operations => {
-        fetch('http://localhost:8081/api/sync', {
+    getAllFromStore('operations').then( operations => {
+        return fetch('http://localhost:8081/api/sync', {
             method: 'POST',
             body: JSON.stringify(operations),
             headers: {
                 'Content-Type': 'application/json'
-            }
+            }})       
         }).then( res => {
-            res.json()
-        .then(data => {
-            processOperations(data)
-        })    
+            return res.json()
+        }).then(data => {
+            console.log(data)
+            return processOperations(data)
         }).catch( e => console.log(e))
-    })
-    
 }
