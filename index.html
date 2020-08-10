@@ -50,7 +50,7 @@
             Measure
           </div>
         </md-list-item>
-        <md-list-item v-for="ingredient in getRecipeIngredients(activeRecipe)" :key="ingredient.__id">
+        <md-list-item v-for="ingredient in getRecipeIngredients(activeRecipe)" :key="ingredient._id">
           <div class="container-ingredient">
             <div class="md-list-text-container">
               {{ ingredient.name }}
@@ -129,7 +129,7 @@
             <md-icon>add</md-icon>
           </md-button>
         </md-list-item>
-        <md-card v-for="recipe in visibleRecipes" :key="recipe.__id" :data-id="recipe.__id">
+        <md-card v-for="recipe in visibleRecipes" :key="recipe._id" :data-id="recipe._id">
           <md-card-header>
             <div class="nowrap">
               <div class="md-title">

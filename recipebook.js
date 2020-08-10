@@ -2,13 +2,13 @@ Vue.use(VueMaterial);
 //SChema
 const emptyRecipe = {
   "version": 1,
-  "__id": "",
+  "_id": "",
   "name": "",
 };
 
 const emptyIngredient = {
   "version": 1,
-  "__id": "",
+  "_id": "",
   "name": "",
   "recipe": ""
 };
@@ -20,7 +20,7 @@ const mockOperations = [
     "key": 'name',
     "value": 'Spaghetti Bolognese',
     "timestamp": 1596723653500,
-    "__id": 'op_ckdiw1bxw00011w66m7mol85k'
+    "_id": 'op_ckdiw1bxw00011w66m7mol85k'
   },
   {
     "store": 'recipes',
@@ -28,7 +28,7 @@ const mockOperations = [
     "key": 'name',
     "value": 'Penne Alfredo',
     "timestamp": 1596723653400,
-    "__id": 'op_ckdiw31to00011w660dtqsvhl',
+    "_id": 'op_ckdiw31to00011w660dtqsvhl',
   }
 ];
 
@@ -83,7 +83,7 @@ var app = new Vue({
   methods: {
     getRecipeIngredients: function(recipe) {
       return this.ingredients.filter(ingredient => (
-        ingredient.recipe === recipe.__id && 
+        ingredient.recipe === recipe._id && 
         ingredient.tombstone != 1 &&
         ingredient.name));
     },
@@ -105,50 +105,50 @@ var app = new Vue({
     onClickSaveEditRecipeTitle: function() {
       let recipeIndex = this.recipes.findIndex(r => r === this.activeRecipe);
       this.recipes[recipeIndex].name = this.editRecipeTitle;
-      processOperations([generateUpdateOperation('recipes', this.activeRecipe.__id, 'name', this.editRecipeTitle)]);
+      processOperations([generateUpdateOperation('recipes', this.activeRecipe._id, 'name', this.editRecipeTitle)]);
       this.onBack();
     },
     onClickSaveEditIngredientTitle: function() {
       let ingredientIndex = this.ingredients.findIndex(i => i === this.activeIngredient);
       this.ingredients[ingredientIndex].name = this.editIngredientTitle;
-      processOperations([generateUpdateOperation('ingredients', this.activeIngredient.__id, 'name', this.editIngredientTitle)]);
+      processOperations([generateUpdateOperation('ingredients', this.activeIngredient._id, 'name', this.editIngredientTitle)]);
       this.onBackIng();
     },
     onClickSaveEditIngredientMeasure: function() {
       let ingredientIndex = this.ingredients.findIndex(i => i === this.activeIngredient);
       this.ingredients[ingredientIndex].measure = this.editIngredientMeasure;
-      processOperations([generateUpdateOperation('ingredients', this.activeIngredient.__id, 'measure', this.editIngredientMeasure)]);
+      processOperations([generateUpdateOperation('ingredients', this.activeIngredient._id, 'measure', this.editIngredientMeasure)]);
       this.onBackIng();
     },
     onClickDeleteIngredient: function(ingredient) {
       let ingredientIndex = this.ingredients.findIndex(i => i === ingredient);
       this.ingredients.splice(ingredientIndex, 1);
-      processOperations([generateDeleteOperation('ingredients', ingredient.__id)]);
+      processOperations([generateDeleteOperation('ingredients', ingredient._id)]);
     },
     onClickDeleteRecipe: function(recipe) {
       let recipeIndex = this.recipes.findIndex(r => r === recipe);
       this.recipes.splice(recipeIndex, 1);
-      processOperations([generateDeleteOperation('recipes', recipe.__id)]);
+      processOperations([generateDeleteOperation('recipes', recipe._id)]);
     },
     onClickAddRecipe: function() {
       if (this.newRecipeTitle != ""){
         var newRecipe = {};
-        newRecipe.__id = 're_' + cuid();
+        newRecipe._id = 're_' + cuid();
         newRecipe.name = this.newRecipeTitle;
         this.recipes.unshift(newRecipe);
-        processOperations([generateUpdateOperation('recipes', newRecipe.__id, 'name', newRecipe.name)]);
+        processOperations([generateUpdateOperation('recipes', newRecipe._id, 'name', newRecipe.name)]);
         this.newRecipeTitle = '';
       }
     },
     onClickAddIngredient: function() {
       if (this.newIngredientTitle != ""){
         var newIngredient = {};
-        newIngredient.__id = 'in_' + cuid();
+        newIngredient._id = 'in_' + cuid();
         newIngredient.name = this.newIngredientTitle;
-        newIngredient.recipe = this.activeRecipe.__id;
+        newIngredient.recipe = this.activeRecipe._id;
         this.ingredients.unshift(newIngredient);
-        setNameOperation = generateUpdateOperation('ingredients', newIngredient.__id, 'name', newIngredient.name),
-        setRecipeOperation = generateUpdateOperation('ingredients', newIngredient.__id, 'recipe', newIngredient.recipe)
+        setNameOperation = generateUpdateOperation('ingredients', newIngredient._id, 'name', newIngredient.name),
+        setRecipeOperation = generateUpdateOperation('ingredients', newIngredient._id, 'recipe', newIngredient.recipe)
         processOperations([setNameOperation, setRecipeOperation]);
         this.newIngredientTitle = '';
       }
@@ -162,6 +162,7 @@ var app = new Vue({
     onBack: function() {
       this.pagetitle='Recipe Book';
       this.uistate='recipeoverview';
+      sync();
     },
     onBackIng: function(){
       this.pagetitle= this.activeRecipe.name;

@@ -1,8 +1,8 @@
 var idbPromise = idb.open('crdt-app', 1, function(upgradeDb) {
         console.log('Creating object stores')
-        upgradeDb.createObjectStore('operations', { keyPath: '__id'});
-        upgradeDb.createObjectStore('recipes', { keyPath: '__id'});
-        upgradeDb.createObjectStore('ingredients', { keyPath: '__id'});
+        upgradeDb.createObjectStore('operations', { keyPath: '_id'});
+        upgradeDb.createObjectStore('recipes', { keyPath: '_id'});
+        upgradeDb.createObjectStore('ingredients', { keyPath: '_id'});
 });
 
 function saveOperation(operation) {
@@ -10,6 +10,14 @@ function saveOperation(operation) {
         let transaction = db.transaction('operations', 'readwrite');
         let store = transaction.objectStore('operations');
         return store.put(operation);
+    });
+};
+
+function deleteOperation(id) {
+    idbPromise.then( db => { 
+        let transaction = db.transaction('operations', 'readwrite');
+        let store = transaction.objectStore('operations');
+        return store.delete(id);
     });
 };
 
@@ -31,7 +39,7 @@ function applyOperation(operation) {
         if (result == undefined) {
             console.log('Object does not exist, creating empty opject')
             var update = {}
-            update.__id = operation.object
+            update._id = operation.object
         }
         else {
             console.log('RESULT', result)
