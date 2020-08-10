@@ -129,7 +129,7 @@ body {
   border-bottom-width: 2px;
 }
 
-.md-button.md-icon-button {
+.md-list-item .md-button.md-icon-button {
   margin: 0 !important;
 }
 
