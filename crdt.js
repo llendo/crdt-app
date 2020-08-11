@@ -177,12 +177,18 @@ function filterOperationsToApply1(mappedOperations){
 
 function sync2(){
     getAllFromStore('operations').then( operations => {
-        return fetch('http://localhost:8081/api/sync', {
+        // return fetch('http://localhost:8081/api/sync', {
+        //     method: 'POST',
+        //     body: JSON.stringify(operations),
+        //     headers: {
+        //         'Content-Type': 'application/json'
+        //     }})
+        return fetch('https://crdt-app-server.herokuapp.com/api/sync', {
             method: 'POST',
             body: JSON.stringify(operations),
             headers: {
                 'Content-Type': 'application/json'
-            }})       
+            }})          
         }).then( res => {
             return res.json()
         }).then(data => {
