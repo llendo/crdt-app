@@ -1,4 +1,4 @@
-var idbPromise = idb.open('crdt-app', 1, function(upgradeDb) {
+var idbPromise = idb.open('crdt-app', 2, function(upgradeDb) {
         console.log('Creating object stores')
         upgradeDb.createObjectStore('operations', { keyPath: '_id'});
         upgradeDb.createObjectStore('recipes', { keyPath: '_id'});

@@ -1,18 +1,4 @@
 Vue.use(VueMaterial);
-//SChema
-const emptyRecipe = {
-  "version": 1,
-  "_id": "",
-  "name": "",
-};
-
-const emptyIngredient = {
-  "version": 1,
-  "_id": "",
-  "name": "",
-  "recipe": ""
-};
-
 const mockOperations = [
   {
     "store": 'recipes',
