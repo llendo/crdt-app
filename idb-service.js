@@ -33,7 +33,7 @@ function postObject(storeName, object){
 }
 
 function applyOperation(operation) {
-    console.log(operation)
+    //console.log(operation)
     idbPromise.then (db => {
         let transaction = db.transaction(operation.store, 'readwrite');
         let store = transaction.objectStore(operation.store);
@@ -50,7 +50,7 @@ function applyOperation(operation) {
             var update = result;
         }
         update[operation.key] = operation.value;
-        console.log(update)
+        //console.log(update)
         return postObject(operation.store, update)
     }).then(() => {
         return saveOperation(operation)

@@ -140,9 +140,12 @@ var app = new Vue({
       }
     },
     onClickSync: function(){
-      sync();
-      this.updateAllUiComponents();
-
+      sync().then(() => {
+        this.updateAllUiComponents();
+      }).catch(e => {
+        console.log('Something went wrong during syncing');
+        console.log(e);
+      })
     },
     onClickRecipe: function(recipe) {
       this.activeRecipe = recipe;

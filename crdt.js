@@ -24,7 +24,7 @@ function generateDeleteOperation (store, Id) {
     let targetObject = Id;
     let timestamp = Date.now();
     console.log ('deleted ', targetObject, 'in Store ', targetStore);
-    navigator.storage.estimate().then((data)=>console.log(data))
+    //navigator.storage.estimate().then((data)=>console.log(data))
     return {
         store: targetStore,
         object: targetObject,
@@ -76,8 +76,8 @@ function createStoreToObjectsMap(objects, storeName){
                 //es kommen zurück: 0, 1, oder 2 arrays mit modifizierten objekten.
 function processOperations(newOperations){
     if (newOperations.length > 0) {
-        getAllFromStore('operations').then( localOperations => {
-            console.log(localOperations)
+        return getAllFromStore('operations').then( localOperations => {
+            //console.log(localOperations)
             return mapOperations(localOperations, newOperations);
         }).then( mappedOperations => {
             return filterOperationsToApply1(mappedOperations);
@@ -96,6 +96,7 @@ function processOperations(newOperations){
         })
     } else {
         console.log('No new operations found')
+        return Promise.resolve();
     }
 }
 
@@ -122,30 +123,6 @@ function mapOperations(localOperations, newOperations){
             reject(new Error('Error: No operations to map. Something went wrong or there might be no incoming operations. This should not happen.'))
         }
     });
-}
-
-function filterOperationsToApply2(mappedOperations){
-    return new Promise((resolve, reject) => {
-        let recipeOperationsToApply = [];
-        let ingredientOperationsToApply = [];
-        Array.from(mappedOperations.keys()).forEach(mappedOperation => {
-            let recentMatchingOperation = mappedOperations.get(mappedOperation)
-            if (!recentMatchingOperation || mappedOperation.timestamp > recentMatchingOperation.timestamp){
-                if(mappedOperation.store == 'recipes'){
-                    recipeOperationsToApply.push(mappedOperation)
-                }else
-                    ingredientOperationsToApply.push(mappedOperation)
-            }
-        })
-        let operationsToApply = new Map([
-            ['recipes', recipeOperationsToApply],
-            ['ingredients', ingredientOperationsToApply]
-        ])
-        if(operationsToApply.get('recipes').length > 0 || operationsToApply.get('ingredients').length > 0){
-            resolve(operationsToApply);
-        }
-        reject('Local operations are already up to date. No newer operations found!');
-    })
 }
 
 function filterOperationsToApply1(mappedOperations){
@@ -176,7 +153,7 @@ function filterOperationsToApply1(mappedOperations){
 }
 
 function sync(){
-    getAllFromStore('operations').then( operations => {
+    return getAllFromStore('operations').then( operations => {
         // return fetch('http://localhost:8081/api/sync', {
         //     method: 'POST',
         //     body: JSON.stringify(operations),
@@ -192,7 +169,7 @@ function sync(){
         }).then( res => {
             return res.json()
         }).then(data => {
-            console.log(data)
+            //console.log(data)
             return processOperations(data)
         }).catch( e => console.log(e))
 }
