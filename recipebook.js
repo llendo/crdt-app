@@ -64,7 +64,7 @@ var app = new Vue({
     }
   },
   created: function() {
-    this.updateAllUiComponents();
+    //this.updateAllUiComponents();
   },
   methods: {
     getRecipeIngredients: function(recipe) {
@@ -140,8 +140,10 @@ var app = new Vue({
       }
     },
     onClickSync: function(){
-      sync2();
+      //sync2();
       this.updateAllUiComponents();
+      window.indexedDB.deleteDatabase("crdt-app");
+
     },
     onClickRecipe: function(recipe) {
       this.activeRecipe = recipe;
