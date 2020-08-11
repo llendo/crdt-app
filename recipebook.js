@@ -64,7 +64,7 @@ var app = new Vue({
     }
   },
   created: function() {
-    //this.updateAllUiComponents();
+    this.updateAllUiComponents();
   },
   methods: {
     getRecipeIngredients: function(recipe) {
