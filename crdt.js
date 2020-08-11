@@ -175,7 +175,7 @@ function filterOperationsToApply1(mappedOperations){
     })
 }
 
-function sync2(){
+function sync(){
     getAllFromStore('operations').then( operations => {
         // return fetch('http://localhost:8081/api/sync', {
         //     method: 'POST',

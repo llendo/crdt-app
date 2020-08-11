@@ -140,9 +140,8 @@ var app = new Vue({
       }
     },
     onClickSync: function(){
-      //sync2();
+      sync();
       this.updateAllUiComponents();
-      window.indexedDB.deleteDatabase("crdt-app");
 
     },
     onClickRecipe: function(recipe) {
