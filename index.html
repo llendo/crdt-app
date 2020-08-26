@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
   <link rel="stylesheet" href="https://unpkg.com/vue-material@0.7.4/dist/vue-material.css">
 
-  <link href="recipebook.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+  <link href="app.css" type="text/css" rel="stylesheet" media="screen,projection"/>
 
 </head>
 <body>
@@ -146,7 +146,7 @@
             </md-button>
           </md-card-header>
           <md-card-actions>
-            <md-button class="md-primary md-raised" v-on:click="onClickRecipe(recipe)">
+            <md-button class="md-primary md-raised" v-on:click="onClickIngredients(recipe)">
                 Ingredients
                 <md-icon>chevron_right</md-icon>
           </md-button>
@@ -157,13 +157,13 @@
     </span>
   </div> 
   
-  <script src="idb.js"></script>
+  <script src="/ext/idb.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/cuid/1.3.8/browser-cuid.min.js"></script>
   <script src="https://unpkg.com/vue@2.4.2/dist/vue.js"></script>
   <script src="https://unpkg.com/vue-material@0.7.4/dist/vue-material.js"></script>
   <script src="crdt.js"></script>
-  <script src="idb-service.js"></script>
-  <script src="recipebook.js"></script>
+  <script src="database.js"></script>
+  <script src="app.js"></script>
 
 
 
