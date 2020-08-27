@@ -28,7 +28,7 @@ self.addEventListener("install", function (event) {
 // intercept page requests
 self.addEventListener("fetch", function (event) {
     //if (event.request.url == "localhost:8001/api/sync") {
-    if (event.request.url == "https://crdt-app-server.herokuapp.com/api/sync") {
+    if (event.request.url == "https://crdt-server.herokuapp.com/api/sync") {
         event.respondWith(fetch(event.request));
     } else {
         event.respondWith(
