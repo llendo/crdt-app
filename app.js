@@ -1,22 +1,4 @@
 Vue.use(VueMaterial);
-const mockOperations = [
-    {
-        store: "recipes",
-        object: "re_ckdiw1bxw002411w66m7mol85s",
-        key: "name",
-        value: "Spaghetti Bolognese",
-        timestamp: 1596723653500,
-        _id: "op_ckdiw1bxw00011w66m7mol85k",
-    },
-    {
-        store: "recipes",
-        object: "re_ckdiw1bxw00011w66m7mol85k",
-        key: "name",
-        value: "Penne Alfredo",
-        timestamp: 1596723653400,
-        _id: "op_ckdiw31to00011w660dtqsvhl",
-    },
-];
 
 Vue.material.registerTheme("default", {
     primary: "green",

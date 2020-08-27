@@ -1,5 +1,3 @@
-//TODO Find a way to save Operations
-
 function generateUpdateOperation(store, Id, key, value) {
     let targetStore = store;
     let targetObject = Id;
@@ -31,7 +29,6 @@ function generateDeleteOperation(store, Id) {
     let targetObject = Id;
     let timestamp = Date.now();
     console.log("deleted " + targetObject + "in Store ", targetStore);
-    //navigator.storage.estimate().then((data)=>console.log(data))
     return {
         store: targetStore,
         object: targetObject,
@@ -66,10 +63,6 @@ function updateObject(operation, storeName) {
         });
 }
 
-//valid operations is a map of store name and valid operations for that store
-//like this: storeName:operations[]
-//sieht komisch aus: array machen aus den keys, für jeden key die funktion ausführen)
-//es kommen zurück: 0, 1, oder 2 arrays mit modifizierten objekten.
 function processOperations(newOperations) {
     if (newOperations.length > 0) {
         return getAllFromStore("operations")
@@ -118,8 +111,6 @@ function mapOperations(localOperations, newOperations) {
                     localOperation.object === newOperation.object &&
                     localOperation.key === newOperation.key,
             );
-            //most recent matching local operation can be undefined
-            //mapped operations cannot be undefined as long as there are operations
             mappedOperations.set(
                 newOperation,
                 mostRecentMatchingLocalOperation,
