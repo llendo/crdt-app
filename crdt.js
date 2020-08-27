@@ -179,7 +179,7 @@ function sync() {
     return getAllFromStore("operations")
         .then((operations) => {
             // return fetch('http://localhost:8081/api/sync', {
-            return fetch("https://crdt-app-server.herokuapp.com/api/sync", {
+            return fetch("https://crdt-server.herokuapp.com/api/sync", {
                 method: "POST",
                 body: JSON.stringify(operations),
                 headers: {

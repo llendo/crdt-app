@@ -9,7 +9,7 @@ var urlstocache = [
     "/ext/idb.js",
     "app.css",
     "https://unpkg.com/vue-material@0.7.4/dist/vue-material.js",
-    "https://unpkg.com/vue@2.4.2/dist/vue.js",
+    "https://unpkg.com/vue@2.4.2/dist/vue.min.js",
     "https://cdnjs.cloudflare.com/ajax/libs/cuid/1.3.8/browser-cuid.min.js",
     "https://unpkg.com/vue-material@0.7.4/dist/vue-material.css",
     "//fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic",
@@ -27,7 +27,6 @@ self.addEventListener("install", function (event) {
 
 // intercept page requests
 self.addEventListener("fetch", function (event) {
-    console.log(event.request.url);
     //if (event.request.url == "localhost:8001/api/sync") {
     if (event.request.url == "https://crdt-app-server.herokuapp.com/api/sync") {
         event.respondWith(fetch(event.request));
