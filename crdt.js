@@ -53,14 +53,16 @@ function modifyObject(object, operation) {
     });
 }
 
-function updateObject(operation, storeName) {
-    return getSingleObjectFromStore(storeName, operation.object)
-        .then((objectToUpdate) => {
-            return modifyObject(objectToUpdate, operation);
+function updateObject(operation, storeName){
+    return idbPromise.then(db => {
+        var transaction = db.transaction(storeName, 'readwrite');
+        var store = transaction.objectStore(storeName);
+        return store.get(operation.object).then( objectToUpdate => {
+            return modifyObject(objectToUpdate, operation)
+        }).then(modifiedObject => {
+            return store.put(modifiedObject)
         })
-        .then((modifiedObject) => {
-            return saveObject(storeName, modifiedObject);
-        });
+    })
 }
 
 function processOperations(newOperations) {
