@@ -1,4 +1,4 @@
-### Anleitung
+### Anleitung zum Aufsetzen:
 Der Client lässt sich einfach über das Aufrufen der `index.html` über einen lokalen Webserver starten.
 
 Wenn ein lokaler Server zum Synchronisieren genutzt werden soll, muss die URL 
@@ -9,6 +9,14 @@ in der Funktion `sync` in der Datei `crdt.js` durch die des lokalen Servers erse
 ```JS
 if (event.request.url == "localhost:8001/api/sync") {
 ```
+Alternativ zum lokalen Aufsetzen ist der gesamte Prototyp auch gehostet auf:
+https://thesis-recipebook.netlify.app/
+
+### Anleitung zur Benutzung:
+
+Nach dem ersten Starten einmal den `Sync` Knopf drücken, um die Daten vom Server zu bekommen.
+Anschließend kann der lokale Stand immer per `Sync` Knopf mit dem Server synchronisiert werden.
+Interessant ist es, offline auf verschiedenen Browsern/Geräten eine Hand voll Änderungen vorzunehmen (ruhig verschiedene Änderungen am Gleichen Rezept) und anschließend beide zu Synchronisieren. Daraufhin werden beide Browser/Geräte auf dem gleichen Stand sein. 
 
 #### Nachtrag 29.08.:
 Beim Aufräumen des Codes hatte sich leider ein kleiner Fehler eingeschlichen, der nun behoben ist:
