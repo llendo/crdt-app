@@ -17,7 +17,7 @@
    
   <div id="app" class="app-viewport">
     <span v-cloak>
-      <!-- top bar -->
+      <!-- Menue bar-->
       <md-whiteframe md-elevation="1" class="main-toolbar">
         <md-toolbar class="md-dense">
           <md-button class="md-icon-button" v-if="(uistate == 'editrecipe') || (uistate == 'editrecipetitle')" v-on:click="onBack">
@@ -26,7 +26,6 @@
           <md-button class="md-icon-button" v-if="(uistate == 'editingredienttitle') || (uistate == 'editingredientmeasure')" v-on:click="onBackIng">
             <md-icon>arrow_back</md-icon>
           </md-button>
-          <!-- page title -->
           <h2 class="md-title" style="flex: 1">{{ pagetitle }}</h2>
           <md-button class="md-button md-secondary md-raised" v-on:click="onClickSync"> 
             SYNC
@@ -34,7 +33,7 @@
         </md-toolbar>
       </md-whiteframe>
 
-      <!-- Recipe editor -->
+      <!-- Ingredient Overview -->
       <md-list class="editrecipe" v-if="uistate == 'editrecipe'">
         <md-list-item>
           <md-input-container>
@@ -90,6 +89,7 @@
       </md-card-actions>
       </md-card>
 
+      <!-- Edit Ingredietn Title-->
       <md-card v-if="uistate == 'editingredienttitle'">
         <md-card-content>
           <md-input-container>
@@ -103,22 +103,23 @@
           </md-button>
         </md-card-actions>
       </md-card>
-      
-        <md-card v-if="uistate == 'editingredientmeasure'">
-          <md-card-content>
-            <md-input-container>
-              <label>Ingredient measure</label>
-              <md-input placeholder="Ingredient measure" v-model="editIngredientMeasure"></md-input>
-            </md-input-container>   
-          </md-card-content>
-          </md-card-actions>
-            <md-button class="md-raised md-primary button-save" v-if="uistate == 'editingredientmeasure'" v-on:click="onClickSaveEditIngredientMeasure" v-bind:disabled="editIngredientMeasure.length == 0">
-              Save
-            </md-button>
-          </md-card-actions>
-        </md-card>
 
-      <!--Recipe List-->
+      <!-- Edit Ingredient Measure -->
+      <md-card v-if="uistate == 'editingredientmeasure'">
+        <md-card-content>
+          <md-input-container>
+            <label>Ingredient measure</label>
+            <md-input placeholder="Ingredient measure" v-model="editIngredientMeasure"></md-input>
+          </md-input-container>   
+        </md-card-content>
+        </md-card-actions>
+          <md-button class="md-raised md-primary button-save" v-if="uistate == 'editingredientmeasure'" v-on:click="onClickSaveEditIngredientMeasure" v-bind:disabled="editIngredientMeasure.length == 0">
+            Save
+          </md-button>
+        </md-card-actions>
+      </md-card>
+
+      <!--Recipe Overview-->
       <md-list v-if="uistate == 'recipeoverview'">
         <md-list-item>
           <div class="inputcontainer-recipe">

@@ -7,11 +7,11 @@ function generateUpdateOperation(store, Id, key, value) {
     console.log(
         "Changed " +
             targetObject +
-            "property " +
+            " property " +
             targetKey +
-            "to " +
+            " to " +
             targetValue +
-            "in " +
+            " in " +
             targetStore,
     );
     return {
@@ -67,7 +67,6 @@ function processOperations(newOperations) {
     if (newOperations.length > 0) {
         return getAllFromStore("operations")
             .then((localOperations) => {
-                //console.log(localOperations)
                 return mapOperations(localOperations, newOperations);
             })
             .then((mappedOperations) => {

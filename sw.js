@@ -15,7 +15,7 @@ var urlstocache = [
     "//fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic",
     "//fonts.googleapis.com/icon?family=Material+Icons",
 ];
-// install/cache page assets
+
 self.addEventListener("install", function (event) {
     event.waitUntil(
         caches.open(cachename).then(function (cache) {
@@ -44,7 +44,6 @@ self.addEventListener("activate", function (event) {
             return Promise.all(
                 keys
                     .filter(function (key) {
-                        // filter old versioned keys
                         return key !== cachename;
                     })
                     .map(function (key) {
